@@ -2,6 +2,8 @@
 #include<fstream>
 #include<string>
 #include<vector>
+#include <unordered_set>
+
 
 std::vector<std::string> theWords;
 int counts[130]; // 5 words * 26 char in alphabet
@@ -78,10 +80,10 @@ int main()
 
 void makeSuggestion()
 {
-    // clear counts
+    // Clear counts
     initCounts();
 
-    // retake stats
+    // Retake stats
     for (int i=0; i<theWords.size(); ++i)
     {
         statWord(theWords[i]);
@@ -111,8 +113,8 @@ bool contains(string theWords,char c, int pos)
 }
 void guessFeedback()
 {
-    // Ask user for feedback 
-    cout << "Input the feedback from your previous guess, it does not have to be the suggested word";
+    // User feedback 
+    cout << "Input the feedback from your previous guess, it does not have to be the suggested word\n";
     cout << "Write each character followed by a number which indicates the feedback you received on the word \n";
     cout << "Where 0 denotes that the letter not in the word \n";
     cout << "Where 1 denotes that the letter is in the word and in the wrong place (this should be true if the same letter is denoted as yellow or green)\n";
@@ -166,19 +168,39 @@ void guessFeedback()
 
 }
 
-
 int wordStrength(string theWord)
 {
-    int strength=0;
-    for (int i=0; i<5; ++i)
+    int strength = 0;
+    double x = 2;  // Score adjustment factor
+
+    // Decrement scores if duplicate letters
+    unordered_set<char> uniqueChars;
+    for (char c : theWord)
+    {
+        if (!uniqueChars.insert(c).second)
+        {
+            
+            strength -= static_cast<int>(x * 100); 
+        }
+    }
+
+    // Calc strength of words
+    for (int i = 0; i < 5; ++i)
     {
         char c = theWord[i];
-        int pos=c-'a';
-        strength += counts[pos*5]+i;
+        int pos = c - 'a';
+        strength += counts[pos * 5] + i;
 
+        // Additional points for vowels
+        if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u')
+        {
+            strength += static_cast<int>(x * 50);  // Increase by x% 
+        }
     }
+
     return strength;
 }
+
 
 
 string findStrongestWord()

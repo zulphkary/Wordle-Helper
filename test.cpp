@@ -2,6 +2,8 @@
 #include<fstream>
 #include<string>
 #include<vector>
+#include <unordered_set>
+
 
 std::vector<std::string> theWords;
 int counts[130]; // 5 words * 26 char in alphabet
@@ -120,7 +122,7 @@ void guessFeedback()
     cout << "E.g. s0c0a1r2y2" << endl;
     
     
-    // Take user input and read just theWords vector
+    // Take user input and readjust theWords vector
     char c;
     int n;
     for (int i=0; i<5; ++i)
@@ -167,18 +169,73 @@ void guessFeedback()
 }
 
 
+// int wordStrength(string theWord)
+// {
+//     int strength = 0;
+//     double x = 2;  // Adjust the value of x as needed
+
+
+//     // Calculate the original strength  // Check for repeating characters
+//     unordered_set<char> uniqueChars;
+//     for (char c : theWord)
+//     {
+//         if (!uniqueChars.insert(c).second)
+//         {
+//             // Character is a repeat, decrement the strength
+//             strength -= static_cast<int>(x * 100);  // Decrement by x% of 100
+//         }
+//     }
+//     for (int i = 0; i < 5; ++i)
+//     {
+//         char c = theWord[i];
+//         int pos = c - 'a';
+//         strength += counts[pos * 5] + i;
+//     }
+
+//     for (char c : theWord)
+//     {
+//         if (!uniqueChars.insert(c).second)
+//         {
+//             // Character is a repeat, increase the strength
+//             strength += static_cast<int>(x * 100);  // Increase by x% of 100
+//         }
+//     }
+//     return strength;
+// }
+
 int wordStrength(string theWord)
 {
-    int strength=0;
-    for (int i=0; i<5; ++i)
+    int strength = 0;
+    double x = 2;  // Adjust the value of x as needed
+
+    // Check for repeating characters and add/subtract points accordingly
+    unordered_set<char> uniqueChars;
+    for (char c : theWord)
+    {
+        if (!uniqueChars.insert(c).second)
+        {
+            // Character is a repeat, decrement the strength
+            strength -= static_cast<int>(x * 100);  // Decrement by x% of 100
+        }
+    }
+
+    // Calculate the original strength with additional points for vowels
+    for (int i = 0; i < 5; ++i)
     {
         char c = theWord[i];
-        int pos=c-'a';
-        strength += counts[pos*5]+i;
+        int pos = c - 'a';
+        strength += counts[pos * 5] + i;
 
+        // Add additional points if the letter is a vowel
+        if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u')
+        {
+            strength += static_cast<int>(x * 50);  // Increase by x% of 50 for vowels
+        }
     }
+
     return strength;
 }
+
 
 
 string findStrongestWord()
@@ -216,6 +273,7 @@ void statWord(string theWord)
         int pos= c - 'a';
         counts [pos*5+i]++;
     }
+    
 }
 
 void initCounts()

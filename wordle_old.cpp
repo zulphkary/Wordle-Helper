@@ -7,11 +7,11 @@ std::vector<std::string> theWords;
 int counts[130]; // 5 words * 26 char in alphabet
 void initCounts();
 void statWord(std::string theWords);
-std::string findStrongestWord();
-int wordStrength(std::string theWords);
-void guessFeedback();
+std::string findBestWord();
+int wordScore(std::string theWords);
+void feedback();
 bool contains(std::string theWord, char c, int pos);
-void makeSuggestion();
+void suggestion();
 
  
 using namespace std;
@@ -57,14 +57,14 @@ int main()
     fout.close();
 
     // Find and print most likely word 
-    cout << "Suggested Guess Attempts:" <<findStrongestWord() <<endl;
+    cout << "Suggested Guess Attempts:" <<findBestWord() <<endl;
 
     // 5 Guess Attempts
     for (int i=0; i<5;++i)
     {
-        guessFeedback();
+        feedback();
 
-        makeSuggestion();
+        suggestion();
         if (theWords.size()==1)
         {
             break;
@@ -76,7 +76,7 @@ int main()
 
 }
 
-void makeSuggestion()
+void suggestion()
 {
     // clear counts
     initCounts();
@@ -86,8 +86,7 @@ void makeSuggestion()
     {
         statWord(theWords[i]);
     }
-    //Find new suggsted word
-    cout<<"Suggested Next Guess: " << findStrongestWord()<<endl<<endl;
+    cout<<"Suggested Next Guess: " <<findBestWord()<<endl<<endl;
 }
 
 bool contains(string theWords,char c, int pos)
@@ -109,36 +108,34 @@ bool contains(string theWords,char c, int pos)
     }
     return false;
 }
-void guessFeedback()
+void feedback()
 {
     // Ask user for feedback 
     cout << "Input the feedback from your previous guess, it does not have to be the suggested word";
-    cout << "Write each character followed by a number which indicates the feedback you received on the word \n";
-    cout << "Where 0 denotes that the letter not in the word \n";
-    cout << "Where 1 denotes that the letter is in the word and in the wrong place (this should be true if the same letter is denoted as yellow or green)\n";
-    cout << "Where 2 denotes that the letter is in the word and in the correct place\n";
-    cout << "E.g. s0c0a1r2y2" << endl;
+    cout << "E.g. TFTWF" << endl;
     
     
-    // Take user input and read just theWords vector
+    // Take user input and readjust theWords vector
     char c;
     int n;
     for (int i=0; i<5; ++i)
     {
-        cin >> c >> n;
-        //cout << c<< n << endl;
+        cin >> c>> n;
+        cout << c<< n << endl;
         for (int j=0; j<theWords.size(); ++j)
         {
             bool doDelete = false;
             switch (n)
             {
-                case 0: // this value is not in the answer
+                case 0:
+                    cout << "print 1" << endl;
                     doDelete = contains (theWords[j], c, -1);
+                    cout << "print 2" << endl;
                     break;
-                case 1: // this value is in the answer, but not in the correct position 
+                case 1:
                     doDelete = !contains (theWords [j], c, -1) || contains (theWords[j], c, i); 
                     break;
-                case 2: // this value is in the answer and is in the correct position
+                case 2:
                     doDelete = !contains (theWords[j], c, i);
                     break;
                 default:
@@ -155,7 +152,6 @@ void guessFeedback()
     cout << endl;
     // Open output filestream
     ofstream fout ("remaining.txt", ios::out);
-
     // Print remaining words
     for (int i=0; i<theWords.size(); ++i)
     {
@@ -167,45 +163,45 @@ void guessFeedback()
 }
 
 
-int wordStrength(string theWord)
+int wordScore(string theWord)
 {
-    int strength=0;
+    int score=0;
     for (int i=0; i<5; ++i)
     {
         char c = theWord[i];
         int pos=c-'a';
-        strength += counts[pos*5]+i;
+        score += counts[pos*5]+i;
 
     }
-    return strength;
+    return score;
 }
 
 
-string findStrongestWord()
+string findBestWord()
 {
     // Open output filestream
-    ofstream fout ("wordStrengths.txt", ios::out);
+    ofstream fout ("wordScore.txt", ios::out);
 
     // Init best word
-    string strongestWord=theWords[0];
-    int strongestStrength = wordStrength(theWords[0]);
+    string probWord=theWords[0];
+    int highestScore = wordScore(theWords[0]);
 
     // Calc word scores
     for (int i=0; i<theWords.size(); ++i)
     {
         // Calc score
-        int strength = wordStrength(theWords[i]);
-        fout<<theWords[i]<<" : "<< strength << endl;
+        int score = wordScore(theWords[i]);
+        fout<<theWords[i]<<" : "<< score << endl;
 
         // Update score if needed
-        if (strength >strongestStrength)
+        if (score >highestScore)
         {
-            strongestStrength=strength;
-            strongestWord=theWords[i];
+            highestScore=score;
+            probWord=theWords[i];
         }
     }
 
-    return strongestWord;
+    return probWord;
 }
 
 void statWord(string theWord)

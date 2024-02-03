@@ -555,6 +555,7 @@ quasi
 arise
 aging
 valet
+opium
 avert
 stuck
 recut
@@ -597,6 +598,7 @@ lefty
 quick
 paste
 given
+octet
 risen
 groan
 leaky
@@ -739,6 +741,7 @@ lobby
 plush
 vigil
 index
+blink
 clung
 qualm
 croup
@@ -761,6 +764,8 @@ spiny
 rigor
 snail
 flown
+rabid
+prose
 thank
 poppy
 budge
