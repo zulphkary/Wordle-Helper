@@ -6,7 +6,7 @@
 
 
 std::vector<std::string> theWords;
-int counts[130]; // 5 words * 26 char in alphabet
+int counts[130]; // Indexing for work rank; 5 words * 26 char in alphabet
 void initCounts();
 void statWord(std::string theWords);
 std::string findStrongestWord();
@@ -113,7 +113,7 @@ bool contains(string theWords,char c, int pos)
 }
 void guessFeedback()
 {
-    // User feedback 
+    // User feedback/directions 
     cout << "Input the feedback from your previous guess, it does not have to be the suggested word\n";
     cout << "Write each character followed by a number which indicates the feedback you received on the word \n";
     cout << "Where 0 denotes that the letter not in the word \n";
@@ -171,33 +171,32 @@ void guessFeedback()
 int wordStrength(string theWord)
 {
     int strength = 0;
-    double x = 2;  // Score adjustment factor
+    double x = 2;  // Score adjustment factor, word rank based on uniqueness and voels
 
     // Decrement scores if duplicate letters
-    unordered_set<char> uniqueChars;
-    for (char c : theWord)
-    {
-        if (!uniqueChars.insert(c).second)
-        {
-            
-            strength -= static_cast<int>(x * 100); 
-        }
-    }
+    unordered_set<char> uniqueChars; // hash table
+    int vowelBonus = static_cast<int>(x * 50); // Calculate the vowel bonus outside the loop
 
-    // Calc strength of words
     for (int i = 0; i < 5; ++i)
     {
         char c = theWord[i];
         int pos = c - 'a';
+
+        // Check for duplicate letters and decrement strength accordingly
+        if (!uniqueChars.insert(c).second)
+        {
+            strength -= static_cast<int>(x * 100); 
+        }
+
+        // Calculate strength of word
         strength += counts[pos * 5] + i;
 
         // Additional points for vowels
         if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u')
         {
-            strength += static_cast<int>(x * 50);  // Increase by x% 
+            strength += vowelBonus;
         }
     }
-
     return strength;
 }
 
