@@ -6,7 +6,7 @@ This is a terminal applicaiton which helps the user with playing the game Wordle
 The algorthim processes user input, generates word suggestions from a given word list, and sorts them based on criteria such as character index rank and letter diversity, providing players with well-prioritized suggestions to enhance their gaming experience.
 
 
-**Preview***
+**Preview**
 
 Below are screenshots of the Wordle game and terminal output:
 
