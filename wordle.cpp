@@ -20,14 +20,14 @@ using namespace std;
 
 int main()
 {
-    // Init counts
+    // init counts
     initCounts();
     
-    // Open input filestream
+    // open input filestream
 
     ifstream fin("words.txt", ios::in);
 
-    // Read in each line
+    // read in each line
 
     string input;
     while (fin>>input)
@@ -36,14 +36,14 @@ int main()
         statWord(input);
     }
 
-    // Close input filestream
+    // close input filestream
 
     fin.close();
 
-    // Open output filestream
+    // open output filestream
     ofstream fout("stats.txt", ios::out);
 
-    // Print stats to output file
+    // print stats to output file
     for (char c = 'a'; c<= 'z'; ++c)
     {
         fout<< c<< "";
@@ -55,10 +55,10 @@ int main()
         cout<<endl;
     }
 
-    //Close output filestream
+    //close output filestream
     fout.close();
 
-    // Find and print most likely word 
+    // find and print most likely word 
     cout << "Suggested Guess Attempts:" <<findStrongestWord() <<endl;
 
     // 5 Guess Attempts
@@ -80,15 +80,15 @@ int main()
 
 void makeSuggestion()
 {
-    // Clear counts
+    // clear counts
     initCounts();
 
-    // Retake stats
+    // retake stats
     for (int i=0; i<theWords.size(); ++i)
     {
         statWord(theWords[i]);
     }
-    //Find new suggsted word
+    //find new suggsted word
     cout<<"Suggested Next Guess: " << findStrongestWord()<<endl<<endl;
 }
 
@@ -113,7 +113,7 @@ bool contains(string theWords,char c, int pos)
 }
 void guessFeedback()
 {
-    // User feedback/directions 
+    // user feedback/directions 
     cout << "Input the feedback from your previous guess, it does not have to be the suggested word\n";
     cout << "Write each character followed by a number which indicates the feedback you received on the word \n";
     cout << "Where 0 denotes that the letter not in the word \n";
@@ -122,7 +122,7 @@ void guessFeedback()
     cout << "E.g. s0c0a1r2y2" << endl;
     
     
-    // Take user input and readjust theWords vector
+    // take user input and readjust theWords vector
     char c;
     int n;
     for (int i=0; i<5; ++i)
@@ -155,10 +155,10 @@ void guessFeedback()
         }
     }
     cout << endl;
-    // Open output filestream
+    // open output filestream
     ofstream fout ("remaining.txt", ios::out);
 
-    // Print remaining words
+    // print remaining words
     for (int i=0; i<theWords.size(); ++i)
     {
         fout << theWords[i] << endl;
@@ -171,9 +171,8 @@ void guessFeedback()
 int wordStrength(string theWord)
 {
     int strength = 0;
-    double x = 2;  // Score adjustment factor, word rank based on uniqueness and voels
+    double x = 2;  // adjust score for duplicate letters
 
-    // Decrement scores if duplicate letters
     unordered_set<char> uniqueChars; // hash table
     int vowelBonus = static_cast<int>(x * 50); // Calculate the vowel bonus outside the loop
 
@@ -182,16 +181,14 @@ int wordStrength(string theWord)
         char c = theWord[i];
         int pos = c - 'a';
 
-        // Check for duplicate letters and decrement strength accordingly
+        // check for duplicate letters
         if (!uniqueChars.insert(c).second)
         {
             strength -= static_cast<int>(x * 100); 
         }
-
-        // Calculate strength of word
         strength += counts[pos * 5] + i;
 
-        // Additional points for vowels
+        // add points for vowels
         if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u')
         {
             strength += vowelBonus;
@@ -204,21 +201,21 @@ int wordStrength(string theWord)
 
 string findStrongestWord()
 {
-    // Open output filestream
+    // open output filestream
     ofstream fout ("wordStrengths.txt", ios::out);
 
-    // Init best word
+    // init best word
     string strongestWord=theWords[0];
     int strongestStrength = wordStrength(theWords[0]);
 
-    // Calc word scores
+    // calc word scores
     for (int i=0; i<theWords.size(); ++i)
     {
-        // Calc score
+        // calc score
         int strength = wordStrength(theWords[i]);
         fout<<theWords[i]<<" : "<< strength << endl;
 
-        // Update score if needed
+        // cpdate score if needed
         if (strength >strongestStrength)
         {
             strongestStrength=strength;
